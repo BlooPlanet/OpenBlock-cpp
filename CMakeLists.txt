@@ -15,8 +15,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 
-add_executable(OpenBlock main.cpp
-        Sources/BlockEngine/BlockData.cpp
-        Sources/BlockEngine/BlockData.h
-)
+add_executable(OpenBlock main.cpp)
 target_link_libraries(OpenBlock raylib)
