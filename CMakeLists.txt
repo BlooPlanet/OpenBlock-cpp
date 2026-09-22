@@ -16,6 +16,9 @@ FetchContent_MakeAvailable(raylib)
 
 
 add_executable(OpenBlock Sources/main.cpp
-        Sources/BlockEngine/BlockData.cpp
-        Sources/BlockEngine/BlockData.h)
+        Sources/BlockEngine/QuadRendererData.cpp
+        Sources/BlockEngine/QuadRendererData.h
+        Sources/BlockEngine/Chunk.cpp
+        Sources/BlockEngine/Chunk.h
+        Sources/BlockEngine/BlockState.h)
 target_link_libraries(OpenBlock raylib)

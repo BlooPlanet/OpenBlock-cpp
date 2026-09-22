@@ -4,7 +4,7 @@
 #include "raylib.h"
 
 
-class BlockData {
+class QuadRendererData {
 public:
     static void addTopVertices(std::vector<float>& vertices, Vector3 blockPos);
     static void addDownVertices(std::vector<float>& vertices, Vector3 blockPos);

@@ -2,12 +2,15 @@
 
 #include "raylib.h"
 #include "raymath.h"
-#include "BlockEngine/BlockData.h"
+#include "BlockEngine/Chunk.h"
+#include "BlockEngine/QuadRendererData.h"
+#include <cmath>
 
 void printVertices(std::vector<float> vertices);
 void printTriangles(std::vector<unsigned short> triangles);
-
-
+void breakBlock(float step,int dist);
+Camera3D camera = {0,1,-2};
+Chunk chunk = {0,0,BlockState::Solid};
 
 int main() {
     std::cout << "hello world!" << std::endl;
@@ -18,44 +21,44 @@ int main() {
     int vertexCount = 0;
     int trianglesCount = 0;
     // top face
-    BlockData::addTopVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,1);
+    QuadRendererData::addTopVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,1);
     vertexCount += 4;
     trianglesCount += 2;
 
     // down face
-    BlockData::addDownVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,0.5f);
+    QuadRendererData::addDownVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,0.5f);
     vertexCount += 4;
     trianglesCount += 2;
 
     // back face
-    BlockData::addBackVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,0.8);
+    QuadRendererData::addBackVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,0.8);
     vertexCount += 4;
     trianglesCount += 2;
 
     // front face
-    BlockData::addFrontVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,0.8);
+    QuadRendererData::addFrontVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,0.8);
     vertexCount += 4;
     trianglesCount += 2;
 
     // right face
-    BlockData::addRightVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,0.9);
+    QuadRendererData::addRightVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,0.9);
     vertexCount += 4;
     trianglesCount += 2;
 
     // left face
-    BlockData::addLeftVertices(vertices, Vector3(0,0,0));
-    BlockData::addTris(triangles,vertexCount);
-    BlockData::addBrightness(colors,0.9);
+    QuadRendererData::addLeftVertices(vertices, Vector3(0,0,0));
+    QuadRendererData::addTris(triangles,vertexCount);
+    QuadRendererData::addBrightness(colors,0.9);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -63,8 +66,6 @@ int main() {
     // for (int t : triangles) {
     //     std::cout << t << std::endl;
     // }
-
-    Camera3D camera = {0,1,-2};
     camera.fovy = 67;
     camera.target = {0,0,0};
     camera.up = {0,1,0};
@@ -82,25 +83,41 @@ int main() {
 
     DisableCursor();
 
+    chunk = {0,0,BlockState::Solid};
+    chunk.constructMesh();
+
     UploadMesh(&mesh, false);
     Material mat = LoadMaterialDefault();
-    Matrix trans = MatrixIdentity();
+    Matrix trans = MatrixTranslate(-1,0,-1);
 
     while (!WindowShouldClose()) {
         UpdateCamera(&camera, CAMERA_FREE);
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            breakBlock(0.1f,10);
+            chunk.constructMesh();
+            // if (chunk.getBLock(0,0,0) == BlockState::None) {
+            //     chunk.setBlock(0,0,0 ,BlockState::Solid);
+            //     chunk.constructMesh();
+            // }else {
+            //     chunk.setBlock(0,0,0 ,BlockState::None);
+            //     chunk.constructMesh();
+            // }
+            std::cout << "chunk created" << std::endl;
+        }
 
         ClearBackground(BLACK);
         BeginDrawing();
         BeginMode3D(camera);
-        // DrawGrid(2,1);
-        // DrawLine3D(Vector3(0,0,0) , Vector3(0,1,0),GREEN);
-        // DrawLine3D(Vector3(0,0,0) , Vector3(0,0,1),BLUE);
-        // DrawLine3D(Vector3(0,0,0) , Vector3(1,0,0),RED);
+        DrawGrid(2,1);
+        DrawLine3D(Vector3(0,0,0) , Vector3(0,1,0),GREEN);
+        DrawLine3D(Vector3(0,0,0) , Vector3(0,0,1),BLUE);
+        DrawLine3D(Vector3(0,0,0) , Vector3(1,0,0),RED);
         DrawMesh(mesh,mat,trans);
+        chunk.render(mat);
         EndMode3D();
         EndDrawing();
     }
-
+    CloseWindow();
     return 0;
 }
 
@@ -111,5 +128,21 @@ void printVertices(std::vector<float> vertices ) {
         std::string z = std::to_string(vertices[i + 2]);
         std::string coord = "(" + x + "," + y + "," + z + ")";
         std::cout << coord << std::endl;
+    }
+}
+
+void breakBlock(float step,int dist) {
+    Vector3 sub = Vector3Subtract(camera.target, camera.position);
+    Vector3 forward = Vector3Normalize(sub);
+    for (float i = 0; i < (float)dist; i += step) {
+        Vector3 worldCoord = camera.position + forward * i;
+        int x = (int)worldCoord.x;
+        int y = (int)worldCoord.y;
+        int z = (int)worldCoord.z;
+
+        if (chunk.getBLock(x,y,z) == BlockState::Solid) {
+            chunk.setBlock(x,y,z,BlockState::None);
+            break;
+        }
     }
 }
