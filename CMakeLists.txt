@@ -20,5 +20,7 @@ add_executable(OpenBlock Sources/main.cpp
         Sources/BlockEngine/QuadRendererData.h
         Sources/BlockEngine/Chunk.cpp
         Sources/BlockEngine/Chunk.h
-        Sources/BlockEngine/BlockState.h)
+        Sources/BlockEngine/BlockState.h
+        Sources/BlockEngine/World.cpp
+        Sources/BlockEngine/World.h)
 target_link_libraries(OpenBlock raylib)

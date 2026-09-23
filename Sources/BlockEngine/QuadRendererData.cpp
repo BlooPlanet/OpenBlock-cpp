@@ -71,8 +71,6 @@ void QuadRendererData::addFrontVertices(std::vector<float> &vertices, Vector3 bl
     vertices.push_back(1 + blockPos.x);
     vertices.push_back(1 + blockPos.y);
     vertices.push_back(1 + blockPos.z);
-
-
 }
 
 void QuadRendererData::addRightVertices(std::vector<float> &vertices, Vector3 blockPos) {
@@ -155,4 +153,51 @@ void QuadRendererData::addDefaultTexCoord(std::vector<float>& textureCoord) {
 
     textureCoord.push_back(0);
     textureCoord.push_back(0);
+}
+
+void QuadRendererData::addVertices(std::vector<float> &vertices, int faceId, Vector3 blockPos) {
+    switch (faceId) {
+        case 0:
+            addTopVertices(vertices,blockPos);
+            break;
+        case 1:
+            addDownVertices(vertices,blockPos);
+            break;
+        case 2:
+            addFrontVertices(vertices,blockPos);
+            break;
+        case 3:
+            addBackVertices(vertices, blockPos);
+            break;
+        case 4:
+            addRightVertices(vertices,blockPos);
+            break;
+        case 5:
+            addLeftVertices(vertices,blockPos);
+            break;
+    }
+}
+
+
+void QuadRendererData::addFaceBrightness(std::vector<unsigned char> &colors, int faceId) {
+    switch (faceId) {
+        case 0:
+            addBrightness(colors,1);
+            break;
+        case 1:
+            addBrightness(colors,0.5f);
+            break;
+        case 2:
+            addBrightness(colors,0.9);
+            break;
+        case 3:
+            addBrightness(colors,0.9);
+            break;
+        case 4:
+            addBrightness(colors,0.8);
+            break;
+        case 5:
+            addBrightness(colors,0.8);
+            break;
+    }
 }
