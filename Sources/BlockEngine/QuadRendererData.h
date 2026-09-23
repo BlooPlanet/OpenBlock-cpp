@@ -15,4 +15,5 @@ public:
 
     static void addTris(std::vector<unsigned short>& triangles , int vertexCount);
     static void addBrightness(std::vector<unsigned char>& colors, float intensity);
+    static void addDefaultTexCoord(std::vector<float>& textureCoord);
 };

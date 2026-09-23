@@ -17,13 +17,16 @@ int main() {
     std::vector<float> vertices;
     std::vector<unsigned short> triangles;
     std::vector<unsigned char> colors;
+    std::vector<float> textureCoord;
 
     int vertexCount = 0;
     int trianglesCount = 0;
+
     // top face
     QuadRendererData::addTopVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,1);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -31,6 +34,7 @@ int main() {
     QuadRendererData::addDownVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,0.5f);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -38,6 +42,7 @@ int main() {
     QuadRendererData::addBackVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,0.8);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -45,6 +50,7 @@ int main() {
     QuadRendererData::addFrontVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,0.8);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -52,6 +58,7 @@ int main() {
     QuadRendererData::addRightVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,0.9);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -59,6 +66,7 @@ int main() {
     QuadRendererData::addLeftVertices(vertices, Vector3(0,0,0));
     QuadRendererData::addTris(triangles,vertexCount);
     QuadRendererData::addBrightness(colors,0.9);
+    QuadRendererData::addDefaultTexCoord(textureCoord);
     vertexCount += 4;
     trianglesCount += 2;
 
@@ -77,33 +85,30 @@ int main() {
     mesh.vertices = vertices.data();
     mesh.indices = triangles.data();
     mesh.colors = colors.data();
+    mesh.texcoords = textureCoord.data();
 
     InitWindow(1200,800, "cube");
     SetTargetFPS(60);
 
     DisableCursor();
 
-    chunk = {0,0,BlockState::Solid};
-    chunk.constructMesh();
+    // chunk = {0,0,BlockState::Solid};
+    // chunk.constructMesh();
 
     UploadMesh(&mesh, false);
+    Texture2D texture = LoadTexture("terrain.png");
     Material mat = LoadMaterialDefault();
+    mat.maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     Matrix trans = MatrixTranslate(-1,0,-1);
 
     while (!WindowShouldClose()) {
         UpdateCamera(&camera, CAMERA_FREE);
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            breakBlock(0.1f,10);
-            chunk.constructMesh();
-            // if (chunk.getBLock(0,0,0) == BlockState::None) {
-            //     chunk.setBlock(0,0,0 ,BlockState::Solid);
-            //     chunk.constructMesh();
-            // }else {
-            //     chunk.setBlock(0,0,0 ,BlockState::None);
-            //     chunk.constructMesh();
-            // }
-            std::cout << "chunk created" << std::endl;
-        }
+
+        // if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        //     breakBlock(0.1f,10);
+        //     chunk.constructMesh();
+        //     std::cout << "chunk created" << std::endl;
+        // }
 
         ClearBackground(BLACK);
         BeginDrawing();
