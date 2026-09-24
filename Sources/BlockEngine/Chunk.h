@@ -7,8 +7,8 @@
 class World;
 
 class Chunk {
-    int width = 16, height = 32, depth = 16;
-    BlockState blockList[16 * 32 * 16];
+    int width = 16, height = 128, depth = 16;
+    BlockState blockList[16 * 128 * 16];
     int posX,posY,posZ;
     Mesh mesh = {0};
     World &world;
@@ -32,4 +32,5 @@ public:
     bool coordInChunk(int x, int y ,int z);
     int getX();
     int getZ();
+    void generateBlocks();
 };

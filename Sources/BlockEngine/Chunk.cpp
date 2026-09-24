@@ -79,68 +79,6 @@ void Chunk::constructMesh() {
                         }
 
                     }
-
-                    // BlockState up_block = getBLock(x,y + 1,z);
-                    // BlockState down_block = getBLock(x,y - 1,z);
-                    // BlockState left_block = getBLock(x + 1,y,z);
-                    // BlockState right_block = getBLock(x - 1,y,z);
-                    // BlockState front_block = getBLock(x,y,z + 1);
-                    // BlockState back_block = getBLock(x,y,z - 1);
-                    //
-                    // if (up_block == BlockState::None) {
-                    //     QuadRendererData::addTopVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,1);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-                    //
-                    // if (down_block == BlockState::None) {
-                    //     QuadRendererData::addDownVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,0.5f);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-                    //
-                    // if (right_block == BlockState::None) {
-                    //     QuadRendererData::addRightVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,0.9f);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-                    //
-                    // if (left_block == BlockState::None) {
-                    //     QuadRendererData::addLeftVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,0.9f);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-                    //
-                    // if (front_block == BlockState::None) {
-                    //     QuadRendererData::addFrontVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,0.8f);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-                    //
-                    // if (back_block == BlockState::None) {
-                    //     QuadRendererData::addBackVertices(vertices,blockPos);
-                    //     QuadRendererData::addTris(triangles,vertex_count);
-                    //     QuadRendererData::addBrightness(colors,0.8f);
-                    //     QuadRendererData::addDefaultTexCoord(uvs);
-                    //     vertex_count += 4;
-                    //     triangle_count += 2;
-                    // }
-
                 }
             }
         }
@@ -177,4 +115,14 @@ int Chunk::getX() {
 
 int Chunk::getZ() {
     return posZ;
+}
+
+void Chunk::generateBlocks() {
+    for (int x = 0; x < width ; x ++) {
+        for (int z = 0; z < depth; ++z) {
+            for (int y = 0; y < height; ++y) {
+                setBlock(x,y,z,BlockState::Solid);
+            }
+        }
+    }
 }

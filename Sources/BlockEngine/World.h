@@ -20,4 +20,5 @@ public:
     Chunk* getChunk(int x, int z);
     BlockState getBlock(int x, int y , int z);
     void setBlock(int x, int y, int z, BlockState block_state);
+    void loadChunks(int originX, int originZ, int renderDist);
 };

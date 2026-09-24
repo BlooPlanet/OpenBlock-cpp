@@ -9,7 +9,8 @@ World::World(int width, int depth) {
         for (int j = 0; j < depth;j++) {
             int coordX = i * 16;
             int coordZ = j * 16;
-            Chunk* chunk = new Chunk(coordX,coordZ,BlockState::Solid,*this);
+            Chunk* chunk = new Chunk(coordX,coordZ,BlockState::None,*this);
+            chunk->generateBlocks();
             chunkToRender.push_back(chunk);
             chunkMap.insert({{coordX,coordZ},chunk});
         }
@@ -68,5 +69,21 @@ void World::setBlock(int x, int y, int z, BlockState block_state) {
         int lx = x - chunk->getX();
         int lz = z - chunk->getZ();
         chunk->setBlock(lx,y,lz, block_state);
+    }
+}
+
+void World::loadChunks(int originX, int originZ, int renderDist) {
+    int currentChunk_x = (int)getChunkCoord(originX,originZ).x;
+    int currentChunk_z = (int)getChunkCoord(originX,originZ).z;
+    for (int x = -renderDist; x <= renderDist; ++x) {
+        for (int z = -renderDist; z <= renderDist; ++z) {
+            int chunkCoordX = x * 16 + currentChunk_x;
+            int chunkCoordZ = z * 16 + currentChunk_z;
+            if (!chunkMap.contains({chunkCoordX,chunkCoordZ})) {
+                Chunk* chunk = new Chunk(chunkCoordX,chunkCoordZ,BlockState::Solid,*this);
+                chunkToRender.push_back(chunk);
+                chunkMap.insert({{chunkCoordX,chunkCoordZ},chunk});
+            }
+        }
     }
 }

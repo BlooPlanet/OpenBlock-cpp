@@ -11,7 +11,12 @@
 void printVertices(std::vector<float> vertices);
 void printTriangles(std::vector<unsigned short> triangles);
 void breakBlock(float step,int dist);
-Camera3D camera = {0,1,-2};
+World world = {0,0};
+Camera3D camera = {1,130,1};
+
+float timer = 0;
+int cx = 0;
+int cz = 0;
 
 int main() {
     std::vector<float> vertices;
@@ -84,26 +89,50 @@ int main() {
     mesh.texcoords = textureCoord.data();
 
     InitWindow(1200,800, "cube");
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 
     DisableCursor();
 
     UploadMesh(&mesh, false);
-    Texture2D texture = LoadTexture("terrain.png");
+    Texture2D texture = LoadTexture("xDirt.png");
+    GenTextureMipmaps(&texture);
+    SetTextureFilter(texture,TEXTURE_FILTER_TRILINEAR);
     Material mat = LoadMaterialDefault();
-   // mat.maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    mat.maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     Matrix trans = MatrixTranslate(-1,0,-1);
 
-    World world = {2,2};
+    world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
     world.constructAll();
 
     while (!WindowShouldClose()) {
         UpdateCamera(&camera, CAMERA_FREE);
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            breakBlock(0.05f,20);
+        }
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+            EnableCursor();
+        }
+
+        timer += GetFrameTime();
+        if (timer >= 0.5f) {
+            Vector3 currentChunk = world.getChunkCoord(camera.position.x,camera.position.z);
+            if (cx != (int)currentChunk.x || cz != (int)currentChunk.z) {
+
+                world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
+                world.constructAll();
+
+                cx = (int)currentChunk.x;
+                cz = (int)currentChunk.z;
+            }
+            timer -= 0.5f;
+        }
+
 
         ClearBackground(BLANK);
         BeginDrawing();
         BeginMode3D(camera);
-        DrawGrid(32,1);
+        DrawGrid(2,16);
         world.render(mat);
         EndMode3D();
         EndDrawing();
@@ -124,5 +153,25 @@ void printVertices(std::vector<float> vertices ) {
         std::string z = std::to_string(vertices[i + 2]);
         std::string coord = "(" + x + "," + y + "," + z + ")";
         std::cout << coord << std::endl;
+    }
+}
+
+void breakBlock(float step, int dist) {
+    Vector3 forward = Vector3Normalize(Vector3Subtract(camera.target, camera.position));
+    for (float i = 0; i < dist; i += step) {
+        Vector3 floating_blockPos = forward * i + camera.position;
+        int bx = (int)std::floor(floating_blockPos.x);
+        int by = (int)std::floor(floating_blockPos.y);
+        int bz = (int)std::floor(floating_blockPos.z);
+        if (world.getBlock(bx,by,bz) == BlockState::Solid) {
+            Chunk* chunk = world.getChunk(bx,bz);
+            world.setBlock(bx,by,bz,BlockState::None);
+            if (chunk != nullptr) {
+                chunk->constructMesh();
+            }
+            break;
+        }
+
+
     }
 }
