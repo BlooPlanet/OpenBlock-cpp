@@ -6,16 +6,18 @@
 
 
 class World {
-    std::map<std::pair<int,int>,Chunk> chunkMap;
+
 
 public:
     std::vector<Chunk*> chunkToRender;
+    std::map<std::pair<int,int>,Chunk*> chunkMap;
     World(int width, int depth);
     void constructAll();
     void render(Material mat);
-    Chunk getChunkFromIndex(int i) {
-        return *chunkToRender[i];
-    }
+    void printChunksData();
 
-    void printChunksData() ;
+    Vector3 getChunkCoord(int x,int z);
+    Chunk* getChunk(int x, int z);
+    BlockState getBlock(int x, int y , int z);
+    void setBlock(int x, int y, int z, BlockState block_state);
 };

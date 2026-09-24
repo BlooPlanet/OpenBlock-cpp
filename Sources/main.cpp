@@ -14,7 +14,6 @@ void breakBlock(float step,int dist);
 Camera3D camera = {0,1,-2};
 
 int main() {
-    std::cout << "hello world!" << std::endl;
     std::vector<float> vertices;
     std::vector<unsigned short> triangles;
     std::vector<unsigned char> colors;
@@ -71,10 +70,6 @@ int main() {
     vertexCount += 4;
     trianglesCount += 2;
 
-    // printVertices(vertices);
-    // for (int t : triangles) {
-    //     std::cout << t << std::endl;
-    // }
     camera.fovy = 67;
     camera.target = {0,0,0};
     camera.up = {0,1,0};
@@ -93,32 +88,11 @@ int main() {
 
     DisableCursor();
 
-    // chunk = {0,0,BlockState::Solid};
-    // chunk.constructMesh();
-
-
-
     UploadMesh(&mesh, false);
     Texture2D texture = LoadTexture("terrain.png");
     Material mat = LoadMaterialDefault();
    // mat.maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     Matrix trans = MatrixTranslate(-1,0,-1);
-
-
-    // World world = {2,2};
-    // Chunk chunk = world.getChunkFromIndex(2);
-    // std::cout << &chunk << std::endl;
-    // std::cout << "testing " << std::endl;
-    // world.printChunksData();
-
-    // for (int i = 0; i < world.chunkToRender.size(); i++) {
-    //     world.chunkToRender[i].constructMesh();
-    //     std::cout << &world.chunkToRender[i] << std::endl;
-    // }
-    //
-
-    // Chunk* chunk_ptr = new Chunk(0,0,BlockState::Solid);
-    // chunk_ptr->constructMesh();
 
     World world = {2,2};
     world.constructAll();
@@ -126,31 +100,20 @@ int main() {
     while (!WindowShouldClose()) {
         UpdateCamera(&camera, CAMERA_FREE);
 
-        // if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        //     breakBlock(0.05f,10);
-        //     chunk.constructMesh();
-        //     std::cout << "chunk created" << std::endl;
-        // }
-
         ClearBackground(BLANK);
         BeginDrawing();
         BeginMode3D(camera);
         DrawGrid(32,1);
-        DrawLine3D(Vector3(0,0,0) , Vector3(0,1,0),GREEN);
-        DrawLine3D(Vector3(0,0,0) , Vector3(0,0,1),BLUE);
-        DrawLine3D(Vector3(0,0,0) , Vector3(1,0,0),RED);
-        //DrawMesh(mesh,mat,trans);
-        // chunk_ptr->render(mat);
         world.render(mat);
         EndMode3D();
         EndDrawing();
     }
-    // delete chunk_ptr;
-    CloseWindow();
-    for (Chunk* c : world.chunkToRender) {
-        delete c;
+
+    for (int i = 0 ; i < world.chunkToRender.size(); i ++) {
+        delete world.chunkToRender[i];
     }
     world.chunkToRender.clear();
+    CloseWindow();
     return 0;
 }
 
@@ -163,19 +126,3 @@ void printVertices(std::vector<float> vertices ) {
         std::cout << coord << std::endl;
     }
 }
-
-// void breakBlock(float step,int dist) {
-//     Vector3 sub = Vector3Subtract(camera.target, camera.position);
-//     Vector3 forward = Vector3Normalize(sub);
-//     for (float i = 0; i < (float)dist; i += step) {
-//         Vector3 worldCoord = camera.position + forward * i;
-//         int x = (int)worldCoord.x;
-//         int y = (int)worldCoord.y;
-//         int z = (int)worldCoord.z;
-//
-//         if (chunk.getBLock(x,y,z) == BlockState::Solid) {
-//             chunk.setBlock(x,y,z,BlockState::None);
-//             break;
-//         }
-//     }
-// }

@@ -5,12 +5,13 @@
 #include "Chunk.h"
 
 World::World(int width, int depth) {
-    for (int i = 0 ; i < width;i++) {
-        for (int j = 0 ; j < depth;j++) {
+    for (int i = 0; i < width;i++) {
+        for (int j = 0; j < depth;j++) {
             int coordX = i * 16;
             int coordZ = j * 16;
-            Chunk* chunk = new Chunk(coordX,coordZ,BlockState::Solid);
+            Chunk* chunk = new Chunk(coordX,coordZ,BlockState::Solid,*this);
             chunkToRender.push_back(chunk);
+            chunkMap.insert({{coordX,coordZ},chunk});
         }
     }
 }
@@ -30,5 +31,42 @@ void World::constructAll() {
 void World::render(Material mat) {
     for (int i = 0; i < chunkToRender.size();i++) {
         chunkToRender[i]->render(mat);
+    }
+}
+
+// fix the negative coordinate
+Vector3 World::getChunkCoord(int x, int z) {
+    int cx = (int)(std::floor(x / 16.0f) * 16);
+    int cz = (int)(std::floor(z / 16.0f) * 16);
+    return Vector3(cx, 0, cz);
+}
+
+Chunk *World::getChunk(int x, int z) {
+    Vector3 chunkCoord = getChunkCoord(x,z);
+    int cx = (int)chunkCoord.x;
+    int cz = (int)chunkCoord.z;
+    if (chunkMap.contains({cx,cz})) {
+        Chunk* chunk = chunkMap[{cx,cz}];
+        return chunk;
+    }
+    return nullptr;
+}
+
+BlockState World::getBlock(int x, int y, int z) {
+    Chunk* chunk = getChunk(x,z);
+    if (chunk != nullptr) {
+        int lx = x - chunk->getX();
+        int lz = z - chunk->getZ();
+        return chunk->getBLock(lx,y,lz);
+    }
+    return BlockState::None;
+}
+
+void World::setBlock(int x, int y, int z, BlockState block_state) {
+    Chunk* chunk = getChunk(x,z);
+    if (chunk != nullptr) {
+        int lx = x - chunk->getX();
+        int lz = z - chunk->getZ();
+        chunk->setBlock(lx,y,lz, block_state);
     }
 }

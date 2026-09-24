@@ -1,16 +1,18 @@
 #include "Chunk.h"
 
+
 #include <iostream>
 #include <vector>
 
 #include "QuadRendererData.h"
 #include "raymath.h"
+#include "World.h"
 
-Chunk::Chunk(int px, int pz, BlockState initialBLock) {
+Chunk::Chunk(int px, int pz, BlockState initialBLock ,World& world) : world(world) {
     posX = px;
     posY = 0;
     posZ = pz;
-    for (auto & i : blockList) {
+    for (auto &i: blockList) {
         i = initialBLock;
     }
     name = "chunk (" + std::to_string(px) + "," + std::to_string(pz) + ")";
@@ -52,14 +54,30 @@ void Chunk::constructMesh() {
                     for (int i = 0; i < sizeof(directions) / sizeof(Vector3);i++) {
                         Vector3 direction = directions[i];
                         Vector3 block_dir = blockPos + direction;
-                        if (getBLock(block_dir.x,block_dir.y,block_dir.z) == BlockState::None) {
-                            QuadRendererData::addVertices(vertices,i,blockPos);
-                            QuadRendererData::addTris(triangles,vertex_count);
-                            QuadRendererData::addFaceBrightness(colors,i);
-                            QuadRendererData::addDefaultTexCoord(uvs);
-                            vertex_count += 4;
-                            triangle_count += 2;
+                        if (coordInChunk(block_dir.x, block_dir.y, block_dir.z)) {
+                            if (getBLock(block_dir.x,block_dir.y,block_dir.z) == BlockState::None) {
+                                QuadRendererData::addVertices(vertices,i,blockPos);
+                                QuadRendererData::addTris(triangles,vertex_count);
+                                QuadRendererData::addFaceBrightness(colors,i);
+                                QuadRendererData::addDefaultTexCoord(uvs);
+                                vertex_count += 4;
+                                triangle_count += 2;
+                            }
+                        }else {
+                            int cx = getX();
+                            int cz = getZ();
+                            Vector3 chunkCoord(cx,0,cz);
+                            Vector3 world_blockCoord = Vector3Add(chunkCoord, block_dir);
+                            if (world.getBlock(world_blockCoord.x,world_blockCoord.y,world_blockCoord.z) == BlockState::None) {
+                                QuadRendererData::addVertices(vertices,i,blockPos);
+                                QuadRendererData::addTris(triangles,vertex_count);
+                                QuadRendererData::addFaceBrightness(colors,i);
+                                QuadRendererData::addDefaultTexCoord(uvs);
+                                vertex_count += 4;
+                                triangle_count += 2;
+                            }
                         }
+
                     }
 
                     // BlockState up_block = getBLock(x,y + 1,z);
@@ -151,4 +169,12 @@ void Chunk::render(Material mat) {
 
 bool Chunk::coordInChunk(int x, int y, int z) {
     return x >= 0 && x < width && y >= 0 && y < height && z >= 0 && z < depth;
+}
+
+int Chunk::getX() {
+    return posX;
+}
+
+int Chunk::getZ() {
+    return posZ;
 }

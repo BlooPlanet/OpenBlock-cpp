@@ -4,12 +4,14 @@
 #include "BlockState.h"
 #include "raylib.h"
 
+class World;
 
 class Chunk {
-    int width = 16, height = 64, depth = 16;
-    BlockState blockList[16 * 64 * 16];
+    int width = 16, height = 32, depth = 16;
+    BlockState blockList[16 * 32 * 16];
     int posX,posY,posZ;
     Mesh mesh = {0};
+    World &world;
 
     Vector3 directions[6] {
         Vector3(0,1,0), // up
@@ -22,10 +24,12 @@ class Chunk {
 
 public:
     std::string name;
-    Chunk(int px,int pz, BlockState initialBLock);
+    Chunk(int px, int pz, BlockState initialBlock, World& world);
     BlockState getBLock(int x, int y, int z);
     void setBlock(int x, int y, int z,BlockState block);
     void constructMesh();
     void render(Material mat);
     bool coordInChunk(int x, int y ,int z);
+    int getX();
+    int getZ();
 };
