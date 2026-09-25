@@ -5,6 +5,7 @@
 #include "BlockEngine/Chunk.h"
 #include "BlockEngine/QuadRendererData.h"
 #include <cmath>
+#include <future>
 
 #include "BlockEngine/World.h"
 
@@ -89,7 +90,7 @@ int main() {
     mesh.texcoords = textureCoord.data();
 
     InitWindow(1200,800, "cube");
-    SetTargetFPS(120);
+    SetTargetFPS(30);
 
     DisableCursor();
 
@@ -101,10 +102,21 @@ int main() {
     mat.maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     Matrix trans = MatrixTranslate(-1,0,-1);
 
-    world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
-    world.constructAll();
+
+    auto loadFuture = std::async(std::launch::async, [&]() {
+        world.loadChunks((int)camera.position.x,(int)camera.position.z,4);
+        world.loadedChunksConstruct();
+    });
+    // //std::future<void> worker = std::async(std::launch::async,world.loadChunks,(int)camera.position.x,(int)camera.position.z,1);
+    // world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
+    // world.loadedChunksConstruct();
+    // world.newLoadedChunks.clear();
 
     while (!WindowShouldClose()) {
+        std::cout <<"fps : " <<  1 / GetFrameTime() << std::endl;
+        using namespace std::chrono_literals;
+
+
         UpdateCamera(&camera, CAMERA_FREE);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             breakBlock(0.05f,20);
@@ -119,8 +131,15 @@ int main() {
             Vector3 currentChunk = world.getChunkCoord(camera.position.x,camera.position.z);
             if (cx != (int)currentChunk.x || cz != (int)currentChunk.z) {
 
-                world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
-                world.constructAll();
+
+                loadFuture = std::async(std::launch::async, [&]() {
+                    world.loadChunks((int)camera.position.x,(int)camera.position.z,4);
+                    world.loadedChunksConstruct();
+                });
+
+                // world.loadChunks((int)camera.position.x,(int)camera.position.z,1);
+                // world.loadedChunksConstruct();
+                // world.newLoadedChunks.clear();
 
                 cx = (int)currentChunk.x;
                 cz = (int)currentChunk.z;
@@ -128,6 +147,13 @@ int main() {
             timer -= 0.5f;
         }
 
+        if (loadFuture.valid() && loadFuture.wait_for(0ms) == std::future_status::ready) {
+            loadFuture.get(); // Async task is completely finished
+            for (int i = 0; i < world.newLoadedChunks.size(); ++i) {
+                world.newLoadedChunks[i]->uploadMesh();
+            }
+            world.newLoadedChunks.clear();
+        }
 
         ClearBackground(BLANK);
         BeginDrawing();
@@ -167,7 +193,11 @@ void breakBlock(float step, int dist) {
             Chunk* chunk = world.getChunk(bx,bz);
             world.setBlock(bx,by,bz,BlockState::None);
             if (chunk != nullptr) {
+                if (chunk->mesh.vaoId != 0) {
+                    chunk->unloadMesh();
+                }
                 chunk->constructMesh();
+                chunk->uploadMesh();
             }
             break;
         }

@@ -25,7 +25,9 @@ void World::printChunksData() {
 
 void World::constructAll() {
     for (int i = 0 ; i < chunkToRender.size(); i++) {
+        chunkToRender[i]->unloadMesh();
         chunkToRender[i]->constructMesh();
+        chunkToRender[i]->uploadMesh();
     }
 }
 
@@ -81,9 +83,36 @@ void World::loadChunks(int originX, int originZ, int renderDist) {
             int chunkCoordZ = z * 16 + currentChunk_z;
             if (!chunkMap.contains({chunkCoordX,chunkCoordZ})) {
                 Chunk* chunk = new Chunk(chunkCoordX,chunkCoordZ,BlockState::Solid,*this);
+                newLoadedChunks.push_back(chunk);
                 chunkToRender.push_back(chunk);
                 chunkMap.insert({{chunkCoordX,chunkCoordZ},chunk});
             }
         }
     }
+}
+
+void World::loadedChunksConstruct() {
+    for (int i = 0; i < newLoadedChunks.size(); ++i) {
+        newLoadedChunks[i]->constructMesh();
+    }
+}
+
+void World::unloadChunks(int cx, int cz) {
+    for (int i = 0; i < chunkToRender.size(); ++i) {
+        Chunk* chunk = chunkToRender[i];
+        int pos_x = chunk->getX();
+        int pos_z = chunk->getZ();
+
+    }
+}
+
+bool World::chunkIsInBound(int cx, int cz) {
+    int min_x = -8 * 16 + cx;
+    int max_x = 8 * 16 + cx;
+
+    int min_z = -8 * 16 + cz;
+    int max_z = 8 * 16 + cz;
+
+    return cx >= min_x && cx < max_x && cz >= min_z && cz < max_z;
+
 }

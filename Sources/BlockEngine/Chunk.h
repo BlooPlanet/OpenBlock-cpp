@@ -10,7 +10,7 @@ class Chunk {
     int width = 16, height = 128, depth = 16;
     BlockState blockList[16 * 128 * 16];
     int posX,posY,posZ;
-    Mesh mesh = {0};
+
     World &world;
 
     Vector3 directions[6] {
@@ -23,6 +23,7 @@ class Chunk {
     };
 
 public:
+    Mesh mesh = {0};
     std::string name;
     Chunk(int px, int pz, BlockState initialBlock, World& world);
     BlockState getBLock(int x, int y, int z);
@@ -33,4 +34,6 @@ public:
     int getX();
     int getZ();
     void generateBlocks();
+    void unloadMesh();
+    void uploadMesh();
 };

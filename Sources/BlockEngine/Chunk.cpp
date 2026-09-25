@@ -33,7 +33,6 @@ void Chunk::setBlock(int x, int y, int z, BlockState block) {
 }
 
 void Chunk::constructMesh() {
-    UnloadMesh(mesh);
     mesh = {0};
 
     int vertex_count = 0;
@@ -95,9 +94,6 @@ void Chunk::constructMesh() {
     memcpy(mesh.colors,colors.data(), colors.size() * sizeof(unsigned char));
     mesh.texcoords = (float*)malloc(uvs.size() * sizeof(float));
     memcpy(mesh.texcoords,uvs.data(),uvs.size() * sizeof(float));
-
-    UploadMesh(&mesh,false);
-    std::cout << name << " " << "is loaded" << std::endl;
 }
 
 void Chunk::render(Material mat) {
@@ -125,4 +121,12 @@ void Chunk::generateBlocks() {
             }
         }
     }
+}
+
+void Chunk::unloadMesh() {
+    UnloadMesh(mesh);
+}
+
+void Chunk::uploadMesh() {
+    UploadMesh(&mesh,false);
 }
