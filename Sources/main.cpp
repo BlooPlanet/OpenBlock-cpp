@@ -155,7 +155,7 @@ int main() {
             world.newLoadedChunks.clear();
         }
 
-        ClearBackground(BLANK);
+        ClearBackground(SKYBLUE);
         BeginDrawing();
         BeginMode3D(camera);
         DrawGrid(2,16);
