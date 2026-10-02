@@ -33,9 +33,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="247d235a-c3c3-4de8-9e1e-28e5aff0b068" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Resources/terrain.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sources/BlockEngine/Chunk.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sources/BlockEngine/Chunk.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sources/BlockState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/BlockEngine/QuadData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Sources/BlockEngine/QuadData.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/BlockEngine/QuadData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Sources/BlockEngine/QuadData.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Sources/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,10 +124,10 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake Application.OpenBlock" />
       <item itemvalue="CMake Application.glfw" />
-      <item itemvalue="CMake Application.raylib" />
       <item itemvalue="CMake Application.update_mappings" />
+      <item itemvalue="CMake Application.OpenBlock" />
+      <item itemvalue="CMake Application.raylib" />
     </list>
   </component>
   <component name="TaskManager">
@@ -149,7 +154,9 @@
       <workItem from="1790825305618" duration="4381000" />
       <workItem from="1790830777693" duration="436000" />
       <workItem from="1790837033806" duration="1787000" />
-      <workItem from="1790842763978" duration="12000" />
+      <workItem from="1790842763978" duration="2631000" />
+      <workItem from="1790876448982" duration="264000" />
+      <workItem from="1790908349838" duration="616000" />
     </task>
     <servers />
   </component>

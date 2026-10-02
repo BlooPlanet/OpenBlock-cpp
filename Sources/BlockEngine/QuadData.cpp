@@ -177,3 +177,26 @@ void QuadData::addUV(int x, int y,std::vector<float>& uvs) {
     uvs.push_back(uvMinX);
     uvs.push_back(uvMinY);
 }
+
+void QuadData::addVertices(std::vector<float> &vertices, int faceId, Vector3 blockPos) {
+    switch (faceId) {
+        case 0:
+            addUpVertices(vertices,blockPos);
+            break;
+        case 1:
+            addDownVertices(vertices,blockPos);
+            break;
+        case 2:
+            addFrontVertices(vertices,blockPos);
+            break;
+        case 3:
+            addBackVertices(vertices, blockPos);
+            break;
+        case 4:
+            addRightVertices(vertices,blockPos);
+            break;
+        case 5:
+            addLeftVertices(vertices,blockPos);
+            break;
+    }
+}

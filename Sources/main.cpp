@@ -1,6 +1,6 @@
-#include <iostream>
 #include "raylib.h"
 #include "raymath.h"
+#include "BlockEngine/Chunk.h"
 #include "BlockEngine/QuadData.h"
 
 Camera3D camera;
@@ -11,7 +11,7 @@ void testMesh();
 int main() {
     InitWindow(1300,800,"Infiniminer clone c++");
     SetTargetFPS(120);
-    DisableCursor();
+    //DisableCursor();
 
     camera = {0,1,-1};
     camera.target = {0,0,0};
@@ -26,6 +26,10 @@ int main() {
     Material mat = LoadMaterialDefault();
     mat.maps[MATERIAL_MAP_DIFFUSE].texture = terrain;
 
+    Chunk chunk = {0,0};
+    chunk.setBlock(1,1,1,BlockState::Stone);
+    chunk.constructMesh();
+
     while (!WindowShouldClose()) {
         UpdateCamera(&camera,CAMERA_FREE);
 
@@ -34,6 +38,7 @@ int main() {
         BeginMode3D(camera);
         DrawGrid(2,16);
         DrawMesh(mesh,mat,matrix);
+        chunk.render();
         EndMode3D();
         EndDrawing();
     }

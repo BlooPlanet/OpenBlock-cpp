@@ -17,4 +17,5 @@ public:
     static void addBrightness(std::vector<unsigned char>& colors, float intensity);
     static void addDefaultUV(std::vector<float>& uvs);
     static void addUV(int x, int y,std::vector<float>& uvs);
+    static void addVertices(std::vector<float>& vertices, int faceId, Vector3 blockPos);
 };
